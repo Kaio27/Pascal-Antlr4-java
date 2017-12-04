@@ -27,7 +27,7 @@ program : PROGRAM STR EOL block  {traducao+="#include<iostream>\n";
         ;
 
 
-block   : varDeclapart?       
+block   : vardeclablock?       
           proceduredeclapart?
           function?           
           block1                 #blocks
@@ -35,7 +35,8 @@ block   : varDeclapart?
 
 var : ID (varDeclapart)+             #varVar 
     ;
-
+vardeclablock: VAR varDeclapart*
+    ;    
 varDeclapart :  ID (',' ID)* ATTR simpletype EOL {traducao+=$ID.text+";"+"\n";}   #v4r 
         | ID {aux+=$ID.text;} (',' ID)* ':=' arraytype      #v4rArrayTp
         | ID                                #varID 
@@ -78,7 +79,7 @@ stmt    : write              #stmtwrite
 
 while1 : WHILE {traducao+="while(";} OPEN condExpr CLOSE {traducao+=")";} DO {traducao+=open+"\n";} x=block1 {traducao+=close;}    #whili1;    
 
-for1 :  FOR {traducao+="for(";;} OPEN attr? {traducao+=";";} EOL condExpr {traducao+=";";}EOL b2 = attr2 CLOSE {traducao+=")"+open;}  b1=block1 {traducao+=close;} #f0r1
+for1 :  FOR {traducao+="for(";;} OPEN attr? {traducao+=";";} EOL condExpr {traducao+=";";}EOL b2 = attr CLOSE {traducao+=")"+open;}  b1=block1 {traducao+=close;} #f0r1
         ;
 
 cond    : IF {traducao+="if(";} OPEN condExpr CLOSE {traducao+=")"+open;} THEN b1=block1  {traducao+=close;}                #ifStmt
@@ -103,8 +104,7 @@ attr    :   varDeclapart  {traducao+=$varDeclapart.text+"=";} ':=' expr  {traduc
         
         ;
 
-attr2   :    varDeclapart {traducao+=$varDeclapart.text+"=";} ':=' expr  #attrExpr1
-        ;
+
 
 expr    : expr1 '+' {traducao+="+";} expr    #exprPlus
         | expr1 '-' {traducao+="-";} expr    #exprMinus
@@ -177,7 +177,7 @@ NUM     : [0-9]+('.'[0-9]+)? ;
 ID      : [a-zA-Z][a-zA-Z0-9_]*('['[0-9]']')?;
 STR     : '"' ('\\' ["\\] | ~["\\\r\n])* '"';
 WS      : [\n\r \t]+ -> skip;
-ATTR    : ':';
+ATTR    : ':=';
 
 
 

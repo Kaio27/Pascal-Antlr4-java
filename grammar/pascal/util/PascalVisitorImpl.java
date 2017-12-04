@@ -83,14 +83,15 @@ public class PascalVisitorImpl extends PascalBaseVisitor<Object> {
         Object[] value = new Object[2];
         value[0] = ctx.simpletype().getText();
         SymbolsTable.getInstance().addSymbol(ctx.ID().get(0).getText(), value);
+        System.out.println("Criando " + ctx.ID().get(0).getText());
         return 0d;
     }
     
     @Override 
     public Object visitAttrExpr(PascalParser.AttrExprContext ctx) {
-       if(SymbolsTable.getInstance().getSymbol(ctx.expr().getText()) != null){Object aux = visit(ctx.expr());
-        if(aux == null){aux = ctx.expr().getText();} 
-        Object[] var = SymbolsTable.getInstance().getSymbol(ctx.expr().getText());
+       if(SymbolsTable.getInstance().getSymbol(ctx.varDeclapart().getText()) != null){Object aux = visit(ctx.expr());
+        if(aux == null){aux = ctx.varDeclapart().getText();} 
+        Object[] var = SymbolsTable.getInstance().getSymbol(ctx.varDeclapart().getText());
             if(var[0].equals("float")){
                 var[1] = Float.parseFloat(aux.toString());
             }else if(var[0].equals("integer")){           
@@ -127,19 +128,22 @@ public class PascalVisitorImpl extends PascalBaseVisitor<Object> {
     
     @Override public Object visitExpr2Var(PascalParser.Expr2VarContext ctx) {
         Object[] var = new Object[2];
-        var[1] = SymbolsTable.getInstance().getSymbol(ctx.ID().toString())[1];
+        System.out.println("Buscando" + ctx.ID().getText());
+        var[1] = SymbolsTable.getInstance().getSymbol(ctx.ID().getText());
+        
         return var[1];
         
     }
     
     @Override 
     public Object visitCondRelOp(PascalParser.CondRelOpContext ctx) {
-       Object c = (Object) visit(ctx.expr(0));
-        Object d = (Object) visit(ctx.expr(1));
-        Double a = Double.parseDouble(c.toString());
-        Double b = Double.parseDouble(d.toString());
+//       Object c = (Object) visit(ctx.expr(0));
+//        Object d = (Object) visit(ctx.expr(1))
+//        Double a = Double.parseDouble(c.toString());
+//        Double b = Double.parseDouble(d.toString());
         
-
+           Double a = (Double) visit(ctx.expr(0));
+           Double b = (Double) visit(ctx.expr(1));
 
 
         int op = ctx.relop.getType(); ///
